@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>جلسه‌ی ضبط کامل برای نقش «صدا»</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css">
+<style>
+:root {
+  --bg: #f6f4ef; --panel: #ffffff; --ink: #1d1b18; --muted: #6b665d; --line: #e2ddd3;
+  --accent: #7a3b2e; --accent-ink: #ffffff; --ok: #2f6b3a; --warn: #9a6a00; --bad: #a3261b;
+  --soft: #f0ece4; --rec: #c0392b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161412; --panel: #1f1c19; --ink: #ece7de; --muted: #a39c90; --line: #35302a;
+    --accent: #d08a6e; --accent-ink: #1a1512; --ok: #7cc48a; --warn: #e0b24a; --bad: #ef7c70; --soft: #29251f; --rec: #ef6b5b;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161412; --panel: #1f1c19; --ink: #ece7de; --muted: #a39c90; --line: #35302a;
+  --accent: #d08a6e; --accent-ink: #1a1512; --ok: #7cc48a; --warn: #e0b24a; --bad: #ef7c70; --soft: #29251f; --rec: #ef6b5b;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.8 Vazirmatn, Tahoma, "Segoe UI", sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px 120px; }
+h1 { font-size: 1.6rem; margin: 0 0 4px; line-height: 1.4; }
+h2 { font-size: 1.2rem; margin: 0 0 10px; }
+.sub { color: var(--muted); margin: 0 0 18px; }
+section.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin: 0 0 16px; }
+ul { margin: 6px 0; padding-inline-start: 22px; }
+li { margin: 4px 0; }
+label { display: block; font-size: .92rem; color: var(--muted); margin-bottom: 4px; }
+input[type=text], select, textarea { width: 100%; font: inherit; color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+textarea { min-height: 44px; resize: vertical; }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+button { font: inherit; border: 1px solid var(--line); background: var(--soft); color: var(--ink); border-radius: 8px; padding: 7px 14px; cursor: pointer; }
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: .45; cursor: default; }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button.rec { background: var(--rec); color: #fff; border-color: var(--rec); }
+button.recording { animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: .6; } }
+.check { display: flex; gap: 8px; align-items: flex-start; color: var(--ink); font-size: 1rem; }
+.check input { margin-top: 7px; }
+.meter { height: 14px; background: var(--soft); border: 1px solid var(--line); border-radius: 7px; overflow: hidden; position: relative; direction: ltr; }
+.meter > i { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--ok); transition: width .05s linear; }
+.meter > b { position: absolute; top: 0; bottom: 0; left: 62%; width: 24%; border-left: 1px dashed var(--muted); border-right: 1px dashed var(--muted); }
+.meter.hot > i { background: var(--bad); }
+.hint { font-size: .9rem; color: var(--muted); }
+.status { font-size: .92rem; margin-top: 6px; }
+.ok { color: var(--ok); } .warn { color: var(--warn); } .bad { color: var(--bad); }
+.part-title { margin: 26px 0 10px; font-size: 1.15rem; }
+.item { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 0 0 12px; }
+.item.done { border-inline-start: 5px solid var(--ok); }
+.item.active { outline: 2px solid var(--accent); }
+.item .head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+.code { direction: ltr; font-family: Consolas, "Courier New", monospace; font-size: .9rem; color: var(--muted); }
+.tag { font-size: .85rem; padding: 1px 8px; border-radius: 10px; background: var(--soft); border: 1px solid var(--line); }
+.text { font-size: 1.28rem; line-height: 2.05; margin: 8px 0 10px; white-space: pre-line; }
+.text.long { font-size: 1.12rem; max-height: 420px; overflow: auto; background: var(--soft); border-radius: 8px; padding: 10px 12px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.timer { direction: ltr; font-family: Consolas, monospace; min-width: 64px; }
+.progress { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 8px 0; }
+.bar { height: 8px; border-radius: 4px; background: var(--soft); overflow: hidden; border: 1px solid var(--line); }
+.bar > i { display: block; height: 100%; width: 0; background: var(--accent); }
+.foot { position: fixed; bottom: 0; left: 0; right: 0; background: var(--panel); border-top: 1px solid var(--line); padding: 10px 16px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; align-items: center; z-index: 10; }
+.hidden { display: none !important; }
+a { color: var(--accent); }
+.dir-ltr { direction: ltr; unicode-bidi: embed; }
+</style>
+</head>
+<body>
+<main>
+  <h1>جلسه‌ی ضبط کامل برای نقش «صدا»</h1>
+  <p class="sub">نمایش «چرا که تو بذل عشق می‌کنی…» — نیروانا × مضارع · حدود یک تا یک‌ونیم ساعت · ۵۲ ضبط · می‌توانید در چند نوبت ضبط کنید</p>
+
+  <section class="panel">
+    <h2>این صفحه چیست؟</h2>
+    <p>«صدا» شخصیتی دیده‌نشدنی در این نمایش است. در این صفحه می‌توانید هر سطر را مستقیم ضبط کنید، یا اگر با گوشی ضبط کرده‌اید فایلش را باز کنید. در پایان، دکمه‌ی «دریافت بسته‌ی صدا» همه‌ی ضبط‌ها را با نام و قالب درست در یک فایل ZIP به شما می‌دهد تا برای ما بفرستید.</p>
+    <ul>
+      <li>بهترین کار: <b>Chrome یا Edge روی رایانه</b>، با هدفون، در اتاقی ساکت. روی گوشی (Chrome اندروید یا Safari آیفون) هم کار می‌کند، به شرط آن‌که صفحه را از نشانی اینترنتی‌ای که کارگردان فرستاده باز کنید.</li>
+      <li>روی گوشی: هنگام ضبط صفحه را باز نگه دارید و به برنامه‌ی دیگری نروید؛ صفحه‌ی قفل یا رفتن به برنامه‌ی دیگر ضبط را قطع می‌کند.</li>
+      <li>ضبط‌ها فقط روی همین رایانه و در همین مرورگر می‌مانند و به هیچ‌جا فرستاده نمی‌شوند، مگر خودتان بسته را بفرستید. اگر صفحه بسته شود، ضبط‌ها با باز کردن دوباره‌ی همین فایل برمی‌گردند.</li>
+      <li>پیش از ضبط، رضایت‌نامه را بخوانید و امضا کنید.</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2>۱. مشخصات</h2>
+    <div class="row">
+      <div><label for="code">کد شما (از کارگردان بگیرید، مثل P2)</label><input type="text" id="code" class="dir-ltr" placeholder="P1" autocomplete="off"></div>
+      <div><label for="name">نام</label><input type="text" id="name" autocomplete="off"></div>
+      <div><label for="gear">با چه چیزی ضبط می‌کنید؟</label>
+        <select id="gear"><option value="">انتخاب کنید</option><option>میکروفن جدا (USB یا کارت صدا)</option><option>هدست یا هدفون میکروفن‌دار</option><option>میکروفن داخلی لپ‌تاپ</option><option>گوشی (فایل‌ها را بعداً باز می‌کنم)</option></select></div>
+    </div>
+    <p class="check" style="margin-top:12px"><input type="checkbox" id="consent"><label for="consent" style="color:inherit;font-size:1rem;margin:0">رضایت‌نامه را خوانده، امضا کرده و برای کارگردان فرستاده‌ام.</label></p>
+  </section>
+
+  <section class="panel">
+    <h2>۲. آماده‌سازی (۵ دقیقه)</h2>
+    <ul>
+      <li>اتاق ساکت با وسایل نرم (پرده، تخت، کمد لباس). پنکه، کولر و یخچال خاموش؛ پنجره بسته.</li>
+      <li>میکروفن حدود ۲۰ تا ۳۰ سانتی‌متر از دهان و کمی کنار آن، نه دقیقاً روبه‌رو.</li>
+      <li>با صدای معمولی صحبت کنید. نشانگر پایین باید بیشتر وقت در <b>ناحیه‌ی خط‌چین</b> باشد و هرگز قرمز نشود.</li>
+      <li>تا پایان جلسه جا، فاصله و وضعیت نشستن را ثابت نگه دارید.</li>
+    </ul>
+    <div class="row" style="margin-top:10px">
+      <div><label for="device">میکروفن</label><select id="device"><option value="">پیش‌فرض</option></select></div>
+      <div style="align-self:end"><button id="micBtn" class="primary">روشن کردن میکروفن</button></div>
+    </div>
+    <div style="margin-top:12px"><div class="meter" id="meter"><b></b><i></i></div>
+      <div class="hint" id="meterText">میکروفن خاموش است.</div><div class="hint dir-ltr" id="micInfo" style="font-size:.8rem"></div></div>
+    <div style="margin-top:14px" class="controls">
+      <button id="roomBtn" disabled>ضبط ۱۰ ثانیه سکوت اتاق</button>
+      <span class="status" id="roomStatus">یک‌بار، پیش از ضبط سطرها: ده ثانیه کاملاً ساکت بمانید.</span>
+    </div>
+  </section>
+
+  <section class="panel" id="directions">
+    <h2>۳. شیوه‌ی خواندن</h2>
+    <p><b>اجرای A — «طبیعی»:</b> همان‌طور بخوانید که اگر این جمله را آرام برای کسی در همان اتاق می‌گفتید. بدون بازیگری و بدون اغراق.</p>
+<p><b>اجرای B — «دور و بالینی»:</b> یکنواخت‌تر و خنثی‌تر، کمی دور؛ مثل صدایی که گزارش می‌دهد و احساسش را نشان نمی‌دهد.</p>
+<p class="hint">در هر دو اجرا صدا باید کامل و روشن باشد. آرام خواندن اشکالی ندارد، اما لطفاً پچ‌پچ یا نجوا نکنید.</p>
+    <ul>
+      <li>هر سطر را کامل و یک‌جا بخوانید. نفس کشیدن وسط جمله اشکالی ندارد.</li>
+      <li>اگر اشتباه کردید، «ضبط دوباره» بزنید و کل سطر را از اول بخوانید.</li>
+      <li>هیچ کلمه‌ای را عوض نکنید. متن محاوره‌ای را محاوره‌ای و متن رسمی را رسمی بخوانید.</li>
+      <li>اگر تلفظ کلمه‌ای را مطمئن نیستید، همان‌طور که طبیعی می‌دانید بخوانید و در «یادداشت» بنویسید.</li>
+      <li>کلید <b class="dir-ltr">Space</b> ضبطِ سطرِ انتخاب‌شده را شروع و متوقف می‌کند، و پس از توقف سطر بعدی انتخاب می‌شود.</li>
+    </ul>
+  </section>
+
+  <div class="progress"><div class="bar"><i id="bar"></i></div><div class="hint" id="progressText"></div></div>
+  <div id="items"></div>
+</main>
+
+<div class="foot">
+  <button id="zipBtn" class="primary">دریافت بسته‌ی صدا (ZIP)</button>
+  <span class="hint" id="zipInfo"></span>
+  <button id="clearBtn">پاک کردن همه</button>
+</div>
+<input type="file" id="filePick" accept="audio/*,.m4a,.wav,.mp3,.aac,.ogg,.opus,.webm,.flac" class="hidden">
+
+<script>
+const SESSION = {"id": "full-session", "title": "Full session — 17 lines x 2, reading, free speech, Grave-Machine pilot", "items": [{"key": "VOICE-001_A", "file": "VOICE-001_A", "line_id": "VOICE-001", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-001 · اجرای A · طبیعی", "text": "بدن زندگی رو پس می‌زنه، غذا، هوا رو پس می‌زنه. به سیاهی میوفتی چون چشم، بدن رو پس می‌زنه.", "min_s": 1, "max_s": 180}, {"key": "VOICE-001_B", "file": "VOICE-001_B", "line_id": "VOICE-001", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-001 · اجرای B · دور و بالینی", "text": "بدن زندگی رو پس می‌زنه، غذا، هوا رو پس می‌زنه. به سیاهی میوفتی چون چشم، بدن رو پس می‌زنه.", "min_s": 1, "max_s": 180}, {"key": "VOICE-002_A", "file": "VOICE-002_A", "line_id": "VOICE-002", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-002 · اجرای A · طبیعی", "text": "نفس زندگی رو پس می‌زنه و بعد خواب به آرومی جای سیاهی رو پر می‌کنه.", "min_s": 1, "max_s": 180}, {"key": "VOICE-002_B", "file": "VOICE-002_B", "line_id": "VOICE-002", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-002 · اجرای B · دور و بالینی", "text": "نفس زندگی رو پس می‌زنه و بعد خواب به آرومی جای سیاهی رو پر می‌کنه.", "min_s": 1, "max_s": 180}, {"key": "VOICE-003_A", "file": "VOICE-003_A", "line_id": "VOICE-003", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-003 · اجرای A · طبیعی", "text": "برای درمان کوتاه مدت اضطراب، حملات پانیک، بی خوابی مرتبط با استرس و اختلال استرس پس از سانحه تجویز می‌شود.", "min_s": 1, "max_s": 180}, {"key": "VOICE-003_B", "file": "VOICE-003_B", "line_id": "VOICE-003", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-003 · اجرای B · دور و بالینی", "text": "برای درمان کوتاه مدت اضطراب، حملات پانیک، بی خوابی مرتبط با استرس و اختلال استرس پس از سانحه تجویز می‌شود.", "min_s": 1, "max_s": 180}, {"key": "VOICE-004_A", "file": "VOICE-004_A", "line_id": "VOICE-004", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-004 · اجرای A · طبیعی", "text": "عوارض شایع شامل خواب آلودگی، سرگیجه و خشکی دهان است اما خطرات جدی‌تر مانند وابستگی و اعتیاد، مشکلات حافظه، تشنج در صورت ترک ناگهانی و اختلالات تنفسی نیز وجود دارد. مصرف در بارداری و شیردهی ممنوع است. و با داروهای زیادی مانند الکل، اوپیوم، قرص‌های ضدافسردگی و آنتی بیوتیک‌ها تداخل دارد.", "min_s": 1, "max_s": 180}, {"key": "VOICE-004_B", "file": "VOICE-004_B", "line_id": "VOICE-004", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-004 · اجرای B · دور و بالینی", "text": "عوارض شایع شامل خواب آلودگی، سرگیجه و خشکی دهان است اما خطرات جدی‌تر مانند وابستگی و اعتیاد، مشکلات حافظه، تشنج در صورت ترک ناگهانی و اختلالات تنفسی نیز وجود دارد. مصرف در بارداری و شیردهی ممنوع است. و با داروهای زیادی مانند الکل، اوپیوم، قرص‌های ضدافسردگی و آنتی بیوتیک‌ها تداخل دارد.", "min_s": 1, "max_s": 180}, {"key": "VOICE-005_A", "file": "VOICE-005_A", "line_id": "VOICE-005", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-005 · اجرای A · طبیعی", "text": "دارای تمامی علایم حیاتی ثابت. تمامی علایم حیاتی دارن از بین میرن.", "min_s": 1, "max_s": 180}, {"key": "VOICE-005_B", "file": "VOICE-005_B", "line_id": "VOICE-005", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-005 · اجرای B · دور و بالینی", "text": "دارای تمامی علایم حیاتی ثابت. تمامی علایم حیاتی دارن از بین میرن.", "min_s": 1, "max_s": 180}, {"key": "VOICE-006_A", "file": "VOICE-006_A", "line_id": "VOICE-006", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-006 · اجرای A · طبیعی", "text": "ذهن به زندگی چنگ می‌زنه، زندگی ذهن رو پس می‌زنه.", "min_s": 1, "max_s": 180}, {"key": "VOICE-006_B", "file": "VOICE-006_B", "line_id": "VOICE-006", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-006 · اجرای B · دور و بالینی", "text": "ذهن به زندگی چنگ می‌زنه، زندگی ذهن رو پس می‌زنه.", "min_s": 1, "max_s": 180}, {"key": "VOICE-007_A", "file": "VOICE-007_A", "line_id": "VOICE-007", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-007 · اجرای A · طبیعی", "text": "به دست‌ها دستور داده شده به زندگی چنگ بزنن، دست‌ها اما خشک فرو می‌افتند، در روزها و سال‌ها، در لحظه می‌افتند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-007_B", "file": "VOICE-007_B", "line_id": "VOICE-007", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-007 · اجرای B · دور و بالینی", "text": "به دست‌ها دستور داده شده به زندگی چنگ بزنن، دست‌ها اما خشک فرو می‌افتند، در روزها و سال‌ها، در لحظه می‌افتند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-008_A", "file": "VOICE-008_A", "line_id": "VOICE-008", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-008 · اجرای A · طبیعی", "text": "زندگی در بدن جا نمی‌شود، جا کم می‌آورد. ذهن، زندگی در بدن را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-008_B", "file": "VOICE-008_B", "line_id": "VOICE-008", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-008 · اجرای B · دور و بالینی", "text": "زندگی در بدن جا نمی‌شود، جا کم می‌آورد. ذهن، زندگی در بدن را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-009_A", "file": "VOICE-009_A", "line_id": "VOICE-009", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-009 · اجرای A · طبیعی", "text": "خاطره در حافظه محو می‌شود، حافظه خاطره را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-009_B", "file": "VOICE-009_B", "line_id": "VOICE-009", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-009 · اجرای B · دور و بالینی", "text": "خاطره در حافظه محو می‌شود، حافظه خاطره را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-010_A", "file": "VOICE-010_A", "line_id": "VOICE-010", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-010 · اجرای A · طبیعی", "text": "صدا در حلق می‌شکند، واژه الکن بیان می‌شود. کلمات بیان را پس می‌زنند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-010_B", "file": "VOICE-010_B", "line_id": "VOICE-010", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-010 · اجرای B · دور و بالینی", "text": "صدا در حلق می‌شکند، واژه الکن بیان می‌شود. کلمات بیان را پس می‌زنند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-011_A", "file": "VOICE-011_A", "line_id": "VOICE-011", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-011 · اجرای A · طبیعی", "text": "تن در تن جا نمی‌شود، از خطوط بیرون می‌زند، مکان، بدن را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-011_B", "file": "VOICE-011_B", "line_id": "VOICE-011", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-011 · اجرای B · دور و بالینی", "text": "تن در تن جا نمی‌شود، از خطوط بیرون می‌زند، مکان، بدن را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-012_A", "file": "VOICE-012_A", "line_id": "VOICE-012", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-012 · اجرای A · طبیعی", "text": "ذهن در تاریخ جا نمی‌شود، پس تاریخ ذهن را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-012_B", "file": "VOICE-012_B", "line_id": "VOICE-012", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-012 · اجرای B · دور و بالینی", "text": "ذهن در تاریخ جا نمی‌شود، پس تاریخ ذهن را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-013_A", "file": "VOICE-013_A", "line_id": "VOICE-013", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-013 · اجرای A · طبیعی", "text": "رویا بین مفاصل و رگ و پی تجسد نمی‌یابد. جسم رویا را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-013_B", "file": "VOICE-013_B", "line_id": "VOICE-013", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-013 · اجرای B · دور و بالینی", "text": "رویا بین مفاصل و رگ و پی تجسد نمی‌یابد. جسم رویا را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-014_A", "file": "VOICE-014_A", "line_id": "VOICE-014", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-014 · اجرای A · طبیعی", "text": "لامسه دست را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-014_B", "file": "VOICE-014_B", "line_id": "VOICE-014", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-014 · اجرای B · دور و بالینی", "text": "لامسه دست را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-015_A", "file": "VOICE-015_A", "line_id": "VOICE-015", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-015 · اجرای A · طبیعی", "text": "خواستن میل را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-015_B", "file": "VOICE-015_B", "line_id": "VOICE-015", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-015 · اجرای B · دور و بالینی", "text": "خواستن میل را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-016_A", "file": "VOICE-016_A", "line_id": "VOICE-016", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-016 · اجرای A · طبیعی", "text": "میل خواهش را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-016_B", "file": "VOICE-016_B", "line_id": "VOICE-016", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-016 · اجرای B · دور و بالینی", "text": "میل خواهش را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-017_A", "file": "VOICE-017_A", "line_id": "VOICE-017", "take": "A", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-017 · اجرای A · طبیعی", "text": "لخته خون را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "VOICE-017_B", "file": "VOICE-017_B", "line_id": "VOICE-017", "take": "B", "part": "بخش ۱ — هفده سطر «صدا»", "part_note": null, "label": "VOICE-017 · اجرای B · دور و بالینی", "text": "لخته خون را پس می‌زند.", "min_s": 1, "max_s": 180}, {"key": "READING_1", "file": "READING_1", "part": "بخش ۲ — خواندن متن‌های متنوع (برای شناخت صدای شما)", "part_note": "این متن‌ها ربطی به نمایش ندارند. هر بخش را پشت سر هم در یک ضبط بخوانید، ساده و طبیعی، هر جمله یک‌بار، با مکثی کوتاه بین جمله‌ها.", "label": "الف) جمله‌های روزمره و رسمی · یک ضبط", "text": "۱. امروز صبح زود بیدار شدم، ولی تا ظهر هیچ کاری نکردم.\n۲. می‌شه یه لحظه صبر کنی؟ الان میام.\n۳. گفتم که نمی‌دونم کجا گذاشتمش، شاید تو کشوی میز باشه.\n۴. هوا خیلی سرد شده، پنجره رو ببند لطفاً.\n۵. دیروز تو خیابون یه نفر رو دیدم که شبیه برادرت بود.\n۶. اگه فردا بارون بیاد، برنامه رو می‌ذاریم برای هفته‌ی بعد.\n۷. چرا زودتر نگفتی؟ من که همه‌ش منتظر بودم.\n۸. این چای یه کم تلخه، شکر داریم؟\n۹. جلسه‌ی بعدی روز سه‌شنبه ساعت ده صبح برگزار خواهد شد.\n۱۰. لطفاً پیش از مصرف، دستورالعمل را به دقت مطالعه کنید.\n۱۱. این دارو را دور از دسترس کودکان و در دمای اتاق نگهداری کنید.\n۱۲. در صورت بروز حساسیت، مصرف را قطع کنید و با پزشک مشورت نمایید.\n۱۳. کتابخانه‌ی مرکزی شهر در سال هزار و سیصد و چهل تأسیس شد.\n۱۴. قطار تهران به مشهد با بیست دقیقه تأخیر حرکت کرد.\n۱۵. تو واقعاً فکر می‌کنی که او برمی‌گردد؟\n۱۶. چه باران تندی! همه‌ی لباس‌هایم خیس شد.\n۱۷. آیا کسی صدای در را شنید؟\n۱۸. کی قرار است این همه کاغذ را مرتب کند؟\n۱۹. نان، پنیر، سبزی و دو بطری آب معدنی بخرید.\n۲۰. شماره‌ی اتاقش دویست و سی و هفت است، طبقه‌ی سوم.\n۲۱. یک، دو، سه، چهار، پنج؛ دوباره از اول.\n۲۲. ساعت دوازده و ربع شب بود که تلفن زنگ زد.\n۲۳. نور زرد چراغ روی دیوار کهنه می‌لرزید.\n۲۴. باد از لای پنجره می‌آمد و بوی خاک باران‌خورده را با خود می‌آورد.\n۲۵. در سکوت اتاق فقط صدای تیک‌تاک ساعت شنیده می‌شد.\n۲۶. او آهسته دستش را روی شانه‌ی مادرش گذاشت و چیزی نگفت.\n۲۷. کوچه تاریک بود و هیچ‌کس از آن‌جا نمی‌گذشت.\n۲۸. سال‌ها گذشت، اما آن روز هنوز در خاطرش مانده بود.\n۲۹. دفترچه‌ی کوچک آبی‌رنگ پدربزرگم هنوز روی قفسه است.\n۳۰. صدای آرام قدم‌های او در راهروی طولانی بیمارستان می‌پیچید.\n۳۱. خانه‌ی قدیمی مادربزرگ پر از بوی نان تازه بود.\n۳۲. کشتی در بندر لنگر انداخت و ملوان‌ها پیاده شدند.\n۳۳. پیرمرد دیشب در خواب مرد.\n۳۴. مهر اداره روی نامه خورده بود و ماه مهر هم تمام شده بود.\n۳۵. گل‌های باغچه را صبح زود آب دادم.\n۳۶. نه، خواهش می‌کنم، دیگر این را تکرار نکن.\n۳۷. بالاخره تمام شد؛ حالا می‌توانیم نفس بکشیم.\n۳۸. بعضی شب‌ها صدای قطار از دور می‌آید و بعد همه‌چیز دوباره ساکت می‌شود.", "long": true, "min_s": 60, "max_s": 1500}, {"key": "READING_2", "file": "READING_2", "part": "بخش ۲ — خواندن متن‌های متنوع (برای شناخت صدای شما)", "label": "ب) سطرهایی از شعر ماشینی «گور-ماشین» · یک ضبط (ساده و روشن، بدون تفسیر)", "text": "۱. بدن سوخته نزدیک کاغذ نازک می‌لغزد.\n۲. پیکر؛ سابقه؛ راهرو.\n۳. کارمند پرونده‌ی خیس را داخل کمد روی هم می‌گذارد.\n۴. یک بدن کفن‌پیچ، بی‌برگ.\n۵. باربر پیکر سفید را به میز می‌کشد.\n۶. پرونده جنازه‌ی کفن‌پیچ را بد می‌خواند.\n۷. جنازه‌ی ثبت‌شده به پوشه‌ی خیس بدل می‌شود.\n۸. جنازه‌ی سفید در دفتر شماره‌خورده ثبت می‌شود.\n۹. دفتر پاره جنازه‌ی سرد را پس می‌زند.\n۱۰. تن سوخته؛ نام می‌لغزد.\n۱۱. درخت افتاده روی سینی بایگانی می‌ماند.\n۱۲. کاغذ نمناک مقابل در تکیه می‌کند.\n۱۳. برگ‌ها افتاده روی سینی بایگانی می‌مانند.\n۱۴. برگ‌ها خشک از روی سینی بایگانی برمی‌گردند.\n۱۵. تیر شکسته کنار پنجره تکیه می‌کند.\n۱۶. باد از در می‌گذرد؛ گل‌ولای پیشخوان را پر می‌کند.\n۱۷. سیل به کف می‌رسد.\n۱۸. دود از روی جعبه‌ی خالی می‌لغزد.\n۱۹. دود تاریکی را می‌پوشاند.\n۲۰. باد از اتاق می‌رسد.\n۲۱. فرم‌ها منتظر می‌مانند؛ بی‌شماره.\n۲۲. سابقه‌ها، هنوز ثبت‌نشده.\n۲۳. مرد لاغر برمی‌گردد؛ مهر می‌ماند.\n۲۴. جعبه‌ها، دوباره سنگین‌تر.\n۲۵. جنازه بی‌جعبه می‌رسد.\n۲۶. از دست آسیب‌دیده خون می‌چکد.\n۲۷. آستین خون‌آلود به کف گیر می‌کند.\n۲۸. زخم خون‌ریزی می‌کند؛ خون آستین را می‌پوشاند.\n۲۹. زخم باز می‌شود؛ خون به میز می‌رسد.\n۳۰. چشم آسیب‌دیده بسته نمی‌شود.", "long": true, "min_s": 60, "max_s": 1500}, {"key": "FREE", "file": "FREE", "part": "بخش ۳ — صحبت آزاد", "label": "سه تا پنج دقیقه، بی‌متن", "text": "آزاد صحبت کنید؛ مثلاً درباره‌ی راه همیشگی‌تان تا خانه، یک روز معمولی، یا اتاقی که در آن بزرگ شده‌اید. لازم نیست جالب یا منظم باشد؛ فقط طبیعی.", "min_s": 60, "max_s": 900}, {"key": "GM-01a", "file": "GM-01a", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای اول", "part_note": "هر سطر را یک‌بار و در حالت «طبیعی» بخوانید. این سطرها را یک ماشین ساخته و ممکن است عجیب به نظر برسند.", "label": "GM-01a", "text": "اداره جنازه‌ی بی‌نام را رد می‌کند.", "min_s": 1, "max_s": 60}, {"key": "GM-01b", "file": "GM-01b", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای اول", "part_note": "هر سطر را یک‌بار و در حالت «طبیعی» بخوانید. این سطرها را یک ماشین ساخته و ممکن است عجیب به نظر برسند.", "label": "GM-01b", "text": "زونکن پیکر سرد را گم می‌کند.", "min_s": 1, "max_s": 60}, {"key": "GM-02a", "file": "GM-02a", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای اول", "part_note": "هر سطر را یک‌بار و در حالت «طبیعی» بخوانید. این سطرها را یک ماشین ساخته و ممکن است عجیب به نظر برسند.", "label": "GM-02a", "text": "سابقه‌ی پاره پیکر شماره‌خورده را عوض می‌کند.", "min_s": 1, "max_s": 60}, {"key": "GM-02b", "file": "GM-02b", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای اول", "part_note": "هر سطر را یک‌بار و در حالت «طبیعی» بخوانید. این سطرها را یک ماشین ساخته و ممکن است عجیب به نظر برسند.", "label": "GM-02b", "text": "پرونده‌ی خیس بدن کفن‌پیچ را پاک می‌کند.", "min_s": 1, "max_s": 60}, {"key": "GM-03a", "file": "GM-03a", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای اول", "part_note": "هر سطر را یک‌بار و در حالت «طبیعی» بخوانید. این سطرها را یک ماشین ساخته و ممکن است عجیب به نظر برسند.", "label": "GM-03a", "text": "کمد سابقه را بد می‌خواند؛ شماره می‌لغزد.", "min_s": 1, "max_s": 60}, {"key": "GM-03b", "file": "GM-03b", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای اول", "part_note": "هر سطر را یک‌بار و در حالت «طبیعی» بخوانید. این سطرها را یک ماشین ساخته و ممکن است عجیب به نظر برسند.", "label": "GM-03b", "text": "میز زونکن را گم می‌کند؛ امضا می‌ماند.", "min_s": 1, "max_s": 60}, {"key": "GM-04a", "file": "GM-04a", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای اول", "part_note": "هر سطر را یک‌بار و در حالت «طبیعی» بخوانید. این سطرها را یک ماشین ساخته و ممکن است عجیب به نظر برسند.", "label": "GM-04a", "text": "تن پیچیده؛ مهر محو می‌شود.", "min_s": 1, "max_s": 60}, {"key": "GM-04b", "file": "GM-04b", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای اول", "part_note": "هر سطر را یک‌بار و در حالت «طبیعی» بخوانید. این سطرها را یک ماشین ساخته و ممکن است عجیب به نظر برسند.", "label": "GM-04b", "text": "بدن سفید؛ شماره گم می‌شود.", "min_s": 1, "max_s": 60}, {"key": "GM-05a", "file": "GM-05a", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای اول", "part_note": "هر سطر را یک‌بار و در حالت «طبیعی» بخوانید. این سطرها را یک ماشین ساخته و ممکن است عجیب به نظر برسند.", "label": "GM-05a", "text": "بدن کفن‌پیچ به برگ خالی تبدیل می‌شود.", "min_s": 1, "max_s": 60}, {"key": "GM-05b", "file": "GM-05b", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای اول", "part_note": "هر سطر را یک‌بار و در حالت «طبیعی» بخوانید. این سطرها را یک ماشین ساخته و ممکن است عجیب به نظر برسند.", "label": "GM-05b", "text": "جنازه‌ی سوخته به فرم خاک‌گرفته بدل می‌شود.", "min_s": 1, "max_s": 60}, {"key": "GM-01", "file": "GM-01", "line_id": "GM-01", "take": "A", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای دوم", "label": "GM-01", "text": "اداره پیکر بی‌نام را گم می‌کند.", "min_s": 1, "max_s": 60}, {"key": "GM-02", "file": "GM-02", "line_id": "GM-02", "take": "A", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای دوم", "label": "GM-02", "text": "سابقه‌ی خیس پیکر کفن‌پیچ را عوض می‌کند.", "min_s": 1, "max_s": 60}, {"key": "GM-03", "file": "GM-03", "line_id": "GM-03", "take": "A", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای دوم", "label": "GM-03", "text": "کمد زونکن را بد می‌خواند؛ امضا می‌لغزد.", "min_s": 1, "max_s": 60}, {"key": "GM-04", "file": "GM-04", "line_id": "GM-04", "take": "A", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای دوم", "label": "GM-04", "text": "تن سفید؛ مهر گم می‌شود.", "min_s": 1, "max_s": 60}, {"key": "GM-05", "file": "GM-05", "line_id": "GM-05", "take": "A", "part": "بخش ۴ — سطرهای «گور-ماشین» (آزمایش مونتاژ) · سطرهای دوم", "label": "GM-05", "text": "بدن سوخته به برگ خاک‌گرفته تبدیل می‌شود.", "min_s": 1, "max_s": 60}]};
+const FA = n => String(n).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
+const $ = id => document.getElementById(id);
+const esc = x => String(x).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const STORE_KEY = "mere-voice-recorder:" + SESSION.id;
+
+// ---------- persistence (IndexedDB for audio, localStorage for small state) ----------
+let db = null;
+function openDB() {
+  return new Promise(res => {
+    try {
+      const r = indexedDB.open("mere-voice-recorder", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("takes");
+      r.onsuccess = () => { db = r.result; res(db); };
+      r.onerror = () => res(null);
+    } catch { res(null); }
+  });
+}
+function idb(mode, fn) {
+  return new Promise(res => {
+    if (!db) return res(null);
+    try { const tx = db.transaction("takes", mode); const q = fn(tx.objectStore("takes")); tx.oncomplete = () => res(q && q.result); tx.onerror = () => res(null); } catch { res(null); }
+  });
+}
+const K = key => SESSION.id + ":" + key;  // takes of different sessions never mix
+const saveTake = (key, rec) => idb("readwrite", s => s.put(rec, K(key)));
+const loadTake = key => idb("readonly", s => s.get(K(key)));
+const deleteTake = key => idb("readwrite", s => s.delete(K(key)));
+function loadState() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; } }
+function saveState() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch {} }
+const state = loadState();
+state.notes = state.notes || {};
+const takes = {};   // key -> {blob, ext, source, stats, at}
+
+// ---------- audio engine ----------
+let ctx = null, stream = null, srcNode = null, analyser = null, tapNode = null;
+let recording = null; // {key, chunks, start, maxSec, onDone}
+const WORKLET = `class Tap extends AudioWorkletProcessor { process(i){ const c=i[0]&&i[0][0]; if(c) this.port.postMessage(c.slice(0)); return true; } } registerProcessor('tap', Tap);`;
+
+// Must run synchronously inside the click handler: Safari/iOS only unlock audio during a user gesture.
+function ensureCtx() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!ctx) ctx = new AC();
+  if (ctx.state !== "running") ctx.resume();
+}
+function newCtx(rate) {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  try { if (ctx) ctx.close(); } catch {}
+  ctx = rate ? new AC({ sampleRate: rate }) : new AC();
+  tapNode = null; srcNode = null;
+  return ctx.resume().catch(() => {});
+}
+async function buildTap() {
+  // AudioWorklet cannot load its module on pages opened from disk (file://) in Chrome,
+  // so fall back to ScriptProcessor there and whenever the worklet fails for any reason.
+  if (ctx.audioWorklet && location.protocol !== "file:" && window.AudioWorkletNode) {
+    try {
+      const url = URL.createObjectURL(new Blob([WORKLET], { type: "application/javascript" }));
+      await ctx.audioWorklet.addModule(url);
+      const node = new AudioWorkletNode(ctx, "tap", { numberOfInputs: 1, numberOfOutputs: 1, channelCount: 1, channelCountMode: "explicit" });
+      node.port.onmessage = e => onChunk(e.data);
+      tapKind = "worklet";
+      return node;
+    } catch (e) { console.warn("AudioWorklet unavailable, using ScriptProcessor:", e); }
+  }
+  const node = ctx.createScriptProcessor(4096, 1, 1);
+  node.onaudioprocess = e => onChunk(e.inputBuffer.getChannelData(0).slice(0));
+  tapKind = "script";
+  return node;
+}
+let tapKind = "", meterRunning = false;
+async function micOn() {
+  const btn = $("micBtn");
+  if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    $("meterText").innerHTML = '<span class="bad">این مرورگر اجازه‌ی ضبط از این صفحه را نمی‌دهد. صفحه را از نشانی اینترنتی‌ای که کارگردان فرستاده (https) باز کنید، یا با گوشی ضبط کنید و فایل‌ها را با «باز کردن فایل» اضافه کنید.</span>';
+    return;
+  }
+  btn.disabled = true; btn.textContent = "در حال روشن کردن…";
+  let step = "getUserMedia";
+  try {
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    const dev = $("device").value;
+    const want = { channelCount: 1, echoCancellation: false, noiseSuppression: false, autoGainControl: false };
+    if (dev) want.deviceId = { exact: dev };
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: want }); }
+    catch (e) {
+      if (e.name === "OverconstrainedError" || e.name === "NotReadableError") stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      else throw e;
+    }
+    step = "audio";
+    if (!ctx) ensureCtx();
+    await ctx.resume().catch(() => {});
+    if (srcNode) try { srcNode.disconnect(); } catch {}
+    try { srcNode = ctx.createMediaStreamSource(stream); }
+    catch (e) {
+      // Firefox (and older engines) refuse a context whose rate differs from the microphone's.
+      const rate = stream.getAudioTracks()[0]?.getSettings?.().sampleRate;
+      await newCtx(rate);
+      srcNode = ctx.createMediaStreamSource(stream);
+    }
+    analyser = ctx.createAnalyser(); analyser.fftSize = 2048;
+    srcNode.connect(analyser);
+    step = "recorder";
+    if (!tapNode) {
+      tapNode = await buildTap();
+      const sink = ctx.createGain(); sink.gain.value = 0; tapNode.connect(sink); sink.connect(ctx.destination);
+    }
+    srcNode.connect(tapNode);
+    await listDevices();
+    const set = stream.getAudioTracks()[0]?.getSettings?.() || {};
+    btn.textContent = "میکروفن روشن است ✓"; $("roomBtn").disabled = false;
+    document.querySelectorAll("button[data-act=rec]").forEach(b => b.disabled = false);
+    $("micInfo").textContent = `${ctx.sampleRate} Hz · ${tapKind} · ${set.label || stream.getAudioTracks()[0]?.label || ""}`;
+    if (!meterRunning) { meterRunning = true; meterLoop(); }
+  } catch (e) {
+    const denied = e && (e.name === "NotAllowedError" || e.name === "SecurityError");
+    const none = e && (e.name === "NotFoundError" || e.name === "DevicesNotFoundError");
+    const msg = denied ? "اجازه‌ی میکروفن داده نشد. روی نماد قفل یا میکروفن در نوار نشانی بزنید، اجازه را روشن کنید و صفحه را دوباره باز کنید."
+      : none ? "هیچ میکروفنی پیدا نشد. میکروفن یا هدست را وصل کنید و دوباره امتحان کنید."
+      : "روشن کردن میکروفن ممکن نشد. صفحه را یک‌بار دوباره باز کنید و دوباره امتحان کنید؛ اگر باز هم نشد، با گوشی ضبط کنید و فایل‌ها را با «باز کردن فایل» اضافه کنید.";
+    $("meterText").innerHTML = `<span class="bad">${msg}</span><br><span class="hint dir-ltr">(${esc(step)}: ${esc(e && e.name)} ${esc(e && e.message)})</span>`;
+    btn.textContent = "روشن کردن میکروفن";
+  } finally { btn.disabled = false; }
+}
+async function listDevices() {
+  try {
+    const devs = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === "audioinput");
+    const sel = $("device"), cur = sel.value;
+    sel.innerHTML = '<option value="">پیش‌فرض</option>' + devs.map(d => `<option value="${esc(d.deviceId)}">${esc(d.label || "میکروفن")}</option>`).join("");
+    sel.value = cur;
+  } catch {}
+}
+function onChunk(c) {
+  if (!recording) return;
+  recording.chunks.push(c);
+  recording.samples += c.length;
+  if (recording.samples / ctx.sampleRate >= recording.maxSec) stopRec();
+}
+function meterLoop() {
+  const buf = new Float32Array(analyser.fftSize);
+  const tick = () => {
+    analyser.getFloatTimeDomainData(buf);
+    let pk = 0; for (const v of buf) { const a = Math.abs(v); if (a > pk) pk = a; }
+    const db = 20 * Math.log10(pk + 1e-9);
+    const pct = Math.max(0, Math.min(100, (db + 60) / 60 * 100));
+    $("meter").querySelector("i").style.width = pct + "%";
+    $("meter").classList.toggle("hot", db > -3);
+    $("meterText").textContent = db > -3 ? "خیلی بلند: کمی دورتر بروید." : db < -40 ? "سکوت یا صدای خیلی آهسته" : "اوج صدا: " + FA(Math.round(db)) + " دسی‌بل";
+    if (recording) { const s = recording.samples / ctx.sampleRate; const t = document.querySelector(`[data-timer="${recording.key}"]`); if (t) t.textContent = fmt(s); }
+    requestAnimationFrame(tick);
+  };
+  tick();
+}
+const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+function startRec(key, maxSec, onDone) {
+  if (ctx && ctx.state !== "running") ctx.resume();
+  if (!ctx || !stream) { alert("اول «روشن کردن میکروفن» را بزنید."); return false; }
+  if (recording) stopRec();
+  recording = { key, chunks: [], samples: 0, maxSec: maxSec || 1800, onDone };
+  return true;
+}
+function stopRec() {
+  if (!recording) return;
+  const r = recording; recording = null;
+  const pcm = new Float32Array(r.samples); let o = 0;
+  for (const c of r.chunks) { pcm.set(c, o); o += c.length; }
+  r.onDone(pcm, ctx.sampleRate);
+}
+
+// ---------- WAV (mono, 24-bit PCM) ----------
+function wav24(pcm, sr) {
+  const n = pcm.length, bytes = n * 3, buf = new ArrayBuffer(44 + bytes), v = new DataView(buf);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, "RIFF"); v.setUint32(4, 36 + bytes, true); w(8, "WAVE"); w(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * 3, true); v.setUint16(32, 3, true); v.setUint16(34, 24, true);
+  w(36, "data"); v.setUint32(40, bytes, true);
+  let p = 44;
+  for (let i = 0; i < n; i++) {
+    let s = Math.max(-1, Math.min(1, pcm[i])); let x = Math.round(s < 0 ? s * 8388608 : s * 8388607);
+    v.setUint8(p++, x & 255); v.setUint8(p++, (x >> 8) & 255); v.setUint8(p++, (x >> 16) & 255);
+  }
+  return new Blob([buf], { type: "audio/wav" });
+}
+function analyse(pcm, sr) {
+  let pk = 0, clip = 0, sum = 0, cnt = 0; const win = Math.max(1, Math.round(sr * 0.02));
+  for (let i = 0; i < pcm.length; i++) { const a = Math.abs(pcm[i]); if (a > pk) pk = a; if (a >= 0.999) clip++; }
+  for (let i = 0; i < pcm.length; i += win) {
+    let s = 0; const m = Math.min(win, pcm.length - i); for (let k = 0; k < m; k++) s += pcm[i + k] * pcm[i + k];
+    const p = s / m; if (10 * Math.log10(p + 1e-12) > -50) { sum += p; cnt++; }
+  }
+  return { duration_s: +(pcm.length / sr).toFixed(2), sample_rate: sr, peak_dbfs: +(20 * Math.log10(pk + 1e-9)).toFixed(1),
+    speech_rms_dbfs: cnt ? +(10 * Math.log10(sum / cnt)).toFixed(1) : null, clipped_samples: clip,
+    floor_rms_dbfs: +(10 * Math.log10(pcm.reduce((a, b) => a + b * b, 0) / Math.max(1, pcm.length) + 1e-12)).toFixed(1) };
+}
+function verdict(st, item) {
+  if (!st) return ['warn', "فایل باز شد؛ بررسی خودکار ممکن نبود."];
+  if (st.duration_s < (item.min_s || 1)) return ['bad', "خیلی کوتاه است؛ دوباره ضبط کنید."];
+  if (st.clipped_samples > 0 || st.peak_dbfs > -0.5) return ['bad', "صدا بریده شده (خیلی بلند). کمی دورتر بروید و دوباره ضبط کنید."];
+  if (st.peak_dbfs < -30) return ['bad', "خیلی آهسته است. نزدیک‌تر شوید یا بلندتر بخوانید."];
+  if (st.peak_dbfs < -20) return ['warn', "کمی آهسته است؛ اگر می‌توانید نزدیک‌تر شوید."];
+  return ['ok', "خوب است."];
+}
+function describe(st) {
+  if (!st) return "";
+  return `${FA(st.duration_s.toFixed(1))} ثانیه · اوج ${FA(Math.round(st.peak_dbfs))} دسی‌بل`;
+}
+
+// ---------- items ----------
+const items = SESSION.items;
+const codeOf = () => ($("code").value.trim().toUpperCase() || "P?");
+const fileBase = it => `${codeOf()}_${it.file}`;
+let active = 0;
+
+function renderItems() {
+  const root = $("items"); root.innerHTML = "";
+  let part = null;
+  items.forEach((it, i) => {
+    if (it.part !== part) { part = it.part; const h = document.createElement("h2"); h.className = "part-title"; h.textContent = part; root.append(h);
+      if (it.part_note) { const n = document.createElement("p"); n.className = "hint"; n.textContent = it.part_note; root.append(n); } }
+    const el = document.createElement("div"); el.className = "item"; el.id = "it" + i;
+    el.innerHTML = `<div class="head"><span class="tag">${it.label}</span><span class="code" data-code="${i}"></span></div>
+      <div class="text ${it.long ? "long" : ""}"></div>
+      <div class="controls">
+        <button data-act="rec" class="rec" ${ctx ? "" : "disabled"}>● ضبط</button>
+        <span class="timer" data-timer="${it.key}"></span>
+        <button data-act="play" disabled>▶ پخش</button>
+        <button data-act="file">باز کردن فایل</button>
+        <button data-act="del" disabled>حذف</button>
+      </div>
+      <div class="status" data-status="${i}"></div>
+      <div style="margin-top:8px"><textarea data-note="${i}" placeholder="یادداشت (اختیاری): مثلاً کلمه‌ای که تلفظش را مطمئن نبودید"></textarea></div>`;
+    el.querySelector(".text").textContent = it.text;
+    el.querySelector("textarea").value = state.notes[it.key] || "";
+    el.querySelector("textarea").oninput = e => { state.notes[it.key] = e.target.value; saveState(); };
+    el.onclick = () => setActive(i);
+    el.querySelector("[data-act=rec]").onclick = e => { e.stopPropagation(); toggleRec(i); };
+    el.querySelector("[data-act=play]").onclick = e => { e.stopPropagation(); play(it.key); };
+    el.querySelector("[data-act=file]").onclick = e => { e.stopPropagation(); pickFile(i); };
+    el.querySelector("[data-act=del]").onclick = e => { e.stopPropagation(); if (confirm("این ضبط حذف شود؟")) { delete takes[it.key]; deleteTake(it.key); refresh(i); } };
+    root.append(el);
+    refresh(i);
+  });
+  setActive(active);
+  updateCodes();
+}
+function updateCodes() { items.forEach((it, i) => { const c = document.querySelector(`[data-code="${i}"]`); if (c) c.textContent = fileBase(it); }); }
+function setActive(i) { active = i; document.querySelectorAll(".item").forEach((e, k) => e.classList.toggle("active", k === i)); }
+function refresh(i) {
+  const it = items[i], t = takes[it.key], el = $("it" + i);
+  el.classList.toggle("done", !!t);
+  el.querySelector("[data-act=play]").disabled = !t;
+  el.querySelector("[data-act=del]").disabled = !t;
+  const st = el.querySelector(`[data-status="${i}"]`);
+  if (t) { const [cls, msg] = verdict(t.stats, it); st.innerHTML = `<span class="${cls}">${msg}</span> <span class="hint">${describe(t.stats)} · ${t.source === "recorded" ? "ضبط در همین صفحه" : "فایل: " + esc(t.name)}</span>`; }
+  else st.innerHTML = "";
+  el.querySelector(`[data-timer="${it.key}"]`).textContent = t && t.stats ? fmt(t.stats.duration_s) : "";
+  progress();
+}
+function progress() {
+  const done = items.filter(it => takes[it.key]).length;
+  $("bar").style.width = (done / items.length * 100) + "%";
+  $("progressText").textContent = `${FA(done)} از ${FA(items.length)} ضبط انجام شده`;
+  let size = 0; for (const k in takes) size += takes[k].blob.size;
+  $("zipInfo").textContent = done ? `${FA(done)} فایل · حدود ${FA((size / 1048576).toFixed(1))} مگابایت` : "";
+}
+function toggleRec(i) {
+  const it = items[i], btn = $("it" + i).querySelector("[data-act=rec]");
+  if (recording && recording.key === it.key) { stopRec(); return; }
+  if (!startRec(it.key, it.max_s, (pcm, sr) => {
+    btn.textContent = "● ضبط دوباره"; btn.classList.remove("recording");
+    const stats = analyse(pcm, sr);
+    const rec = { blob: wav24(pcm, sr), ext: "wav", source: "recorded", stats, at: new Date().toISOString(), name: "" };
+    takes[it.key] = rec; saveTake(it.key, rec); refresh(i);
+    if (i + 1 < items.length) setActive(i + 1);
+  })) return;
+  setActive(i);
+  document.querySelectorAll("button[data-act=rec]").forEach(b => { b.classList.remove("recording"); if (b.textContent === "■ توقف") b.textContent = "● ضبط"; });
+  btn.textContent = "■ توقف"; btn.classList.add("recording");
+}
+let player = null;
+function play(key) {
+  if (player) { player.pause(); player = null; }
+  const t = takes[key]; if (!t) return;
+  player = new Audio(URL.createObjectURL(t.blob)); player.play();
+}
+let pickFor = null;
+function pickFile(i) { pickFor = i; $("filePick").value = ""; $("filePick").click(); }
+$("filePick").onchange = async e => {
+  const f = e.target.files[0]; if (!f || pickFor === null) return;
+  const it = items[pickFor];
+  const ext = (f.name.split(".").pop() || "audio").toLowerCase().replace(/[^a-z0-9]/g, "");
+  let stats = null;
+  try {
+    const ac = ctx || new AudioContext();
+    const buf = await ac.decodeAudioData(await f.arrayBuffer());
+    const ch = buf.getChannelData(0); stats = analyse(ch, buf.sampleRate);
+  } catch {}
+  const rec = { blob: f, ext, source: "file", stats, at: new Date().toISOString(), name: f.name };
+  takes[it.key] = rec; saveTake(it.key, rec); refresh(pickFor);
+};
+
+// room tone
+$("roomBtn").onclick = () => {
+  const b = $("roomBtn");
+  if (recording && recording.key === "ROOMTONE") return;
+  if (!startRec("ROOMTONE", 10, (pcm, sr) => {
+    b.disabled = false; b.textContent = "ضبط دوباره‌ی سکوت اتاق";
+    const stats = analyse(pcm, sr);
+    const rec = { blob: wav24(pcm, sr), ext: "wav", source: "recorded", stats, at: new Date().toISOString(), name: "" };
+    takes.ROOMTONE = rec; saveTake("ROOMTONE", rec); roomStatus();
+    progress();
+  })) return;
+  b.disabled = true; b.textContent = "در حال ضبط سکوت… ساکت بمانید";
+};
+function roomStatus() {
+  const t = takes.ROOMTONE; if (!t) return;
+  const f = t.stats.floor_rms_dbfs;
+  const [cls, msg] = f < -60 ? ["ok", "اتاق ساکت است. عالی."] : f < -50 ? ["ok", "اتاق به اندازه‌ی کافی ساکت است."] : f < -42 ? ["warn", "کمی نویز هست. اگر می‌توانید منبع صدا (پنکه، یخچال، پنجره) را خاموش کنید."] : ["bad", "اتاق پرسروصداست. جای ساکت‌تری پیدا کنید یا منبع صدا را خاموش کنید."];
+  $("roomStatus").innerHTML = `<span class="${cls}">${msg}</span> <span class="hint">(نویز زمینه ${FA(Math.round(f))} دسی‌بل)</span>`;
+}
+
+// phones pause audio when the page is hidden: close the take cleanly and resume audio on return
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && recording) { stopRec(); alert("ضبط متوقف شد چون صفحه پنهان شد. اگر لازم است، این سطر را دوباره ضبط کنید."); }
+  if (!document.hidden && ctx && ctx.state !== "running") ctx.resume().catch(() => {});
+});
+
+// keyboard: space toggles recording of the active item
+document.addEventListener("keydown", e => {
+  if (e.code !== "Space" || /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;
+  e.preventDefault(); if (ctx) { toggleRec(active); $("it" + active).scrollIntoView({ block: "center", behavior: "smooth" }); }
+});
+
+// ---------- ZIP (store) ----------
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8) { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+async function makeZip(files) {
+  const enc = new TextEncoder(), parts = [], central = []; let offset = 0;
+  const now = new Date(), dt = ((now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1)), dd = (((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate());
+  for (const f of files) {
+    const data = new Uint8Array(await f.blob.arrayBuffer()), name = enc.encode(f.name), crc = crc32(data);
+    const h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+    h.setUint16(10, dt, true); h.setUint16(12, dd, true); h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true);
+    h.setUint16(26, name.length, true); h.setUint16(28, 0, true);
+    parts.push(h.buffer, name, data);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+    c.setUint16(12, dt, true); c.setUint16(14, dd, true); c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true);
+    c.setUint16(28, name.length, true); c.setUint32(42, offset, true);
+    central.push(c.buffer, name);
+    offset += 30 + name.length + data.length;
+  }
+  const csize = central.reduce((a, b) => a + (b.byteLength ?? b.length), 0);
+  const e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, csize, true); e.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, e.buffer], { type: "application/zip" });
+}
+$("zipBtn").onclick = async () => {
+  const code = $("code").value.trim().toUpperCase();
+  if (!/^[A-Z]+\d+$/.test(code)) { alert("لطفاً کد خود را در بخش «مشخصات» بنویسید (مثل P2)."); $("code").focus(); return; }
+  const list = []; const manifest = { schema: "mere-voice.recording-package.v1", session: SESSION.id, session_title: SESSION.title,
+    performer_code: code, performer_name: $("name").value.trim(), gear: $("gear").value, consent_confirmed: $("consent").checked,
+    created_at: new Date().toISOString(), user_agent: navigator.userAgent, takes: [] };
+  if (takes.ROOMTONE) { list.push({ name: `${code}_ROOMTONE.${takes.ROOMTONE.ext}`, blob: takes.ROOMTONE.blob }); manifest.room_tone = takes.ROOMTONE.stats; }
+  for (const it of items) {
+    const t = takes[it.key]; if (!t) continue;
+    const name = `${code}_${it.file}.${t.ext}`; list.push({ name, blob: t.blob });
+    manifest.takes.push({ file: name, item: it.key, line_id: it.line_id || null, take: it.take || null, part: it.part, text_fa: it.text,
+      source: t.source, original_name: t.name || null, recorded_at: t.at, quality: t.stats, note: state.notes[it.key] || "" });
+  }
+  if (!manifest.takes.length) { alert("هنوز چیزی ضبط نشده است."); return; }
+  const missing = items.filter(it => !takes[it.key]).length;
+  if (missing && !confirm(`${FA(missing)} مورد هنوز ضبط نشده است. بسته با همین موارد ساخته شود؟`)) return;
+  list.push({ name: `${code}_manifest.json`, blob: new Blob([JSON.stringify(manifest, null, 2)], { type: "application/json" }) });
+  $("zipBtn").disabled = true; $("zipBtn").textContent = "در حال ساختن بسته…";
+  try {
+    const zip = await makeZip(list);
+    const a = document.createElement("a"); a.href = URL.createObjectURL(zip);
+    a.download = `${code}_mere-voice_${SESSION.id}_${new Date().toISOString().slice(0, 10)}.zip`; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+    alert("بسته ساخته شد. آن را به‌صورت «فایل» (نه پیام صوتی) برای کارگردان بفرستید: گوگل‌درایو، ایمیل، یا تلگرام با «ارسال به‌صورت فایل».");
+  } finally { $("zipBtn").disabled = false; $("zipBtn").textContent = "دریافت بسته‌ی صدا (ZIP)"; }
+};
+$("clearBtn").onclick = async () => {
+  if (!confirm("همه‌ی ضبط‌های این جلسه از این مرورگر پاک شود؟ اگر بسته را هنوز نفرستاده‌اید، اول آن را دریافت کنید.")) return;
+  for (const k of Object.keys(takes)) { delete takes[k]; await deleteTake(k); }
+  state.notes = {}; saveState(); renderItems(); $("roomStatus").textContent = "";
+};
+
+// ---------- boot ----------
+["code", "name", "gear"].forEach(id => { const el = $(id); el.value = state[id] || ""; el.oninput = el.onchange = () => { state[id] = el.value; saveState(); if (id === "code") updateCodes(); }; });
+$("consent").checked = !!state.consent; $("consent").onchange = () => { state.consent = $("consent").checked; saveState(); };
+$("micBtn").onclick = () => { try { ensureCtx(); } catch {} micOn(); };
+$("device").onchange = () => { if (stream) micOn(); };
+(async () => {
+  await openDB();
+  for (const k of ["ROOMTONE", ...items.map(i => i.key)]) { const t = await loadTake(k); if (t && t.blob) takes[k] = t; }
+  renderItems(); roomStatus(); progress();
+})();
+</script>
+</body>
+</html>
