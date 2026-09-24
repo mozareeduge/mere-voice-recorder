@@ -1,6 +1,6 @@
 # mere-voice-recorder
 
-Browser recorder pages for the Voice (صدا) in «چرا که تو بذل عشق می‌کنی…» (Niravana × Mozare).
+Browser recorder pages for the Voice (صدا) in «آنجا که خسارت محکم ایستاده».
 Recordings stay on the performer’s device; the page only downloads a ZIP package.
 Sources: github.com/mozareeduge/mere-voice (recording_kit/).
 
